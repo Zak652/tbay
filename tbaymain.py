@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 
-from tbay import register_user, login, add_item, place_bid, highest_bidder
+from tbay import register_user, login, add_item, place_bid, highest_bidder, biddable_items
 
 
 def main():
