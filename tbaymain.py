@@ -34,6 +34,7 @@ def main():
 
 		#View highest bid
 		elif activity in ['H', 'h', 'view']:
+			print(biddable_items())
 			print(highest_bidder())
 
 
