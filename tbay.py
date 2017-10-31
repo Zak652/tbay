@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.sql import func
 from datetime import datetime
+import getpass
 
 
 engine = create_engine('postgresql://zak:thinkful@localhost:5432/tbay')
@@ -66,8 +67,10 @@ def register_user():
 
 def login():
 	""" Login facility for registered users """
+	global logged_in
 	username = input("Username: ")
-	password = input("Password: ")
+	# password = input("Password: ")
+	password = getpass.getpass("Password: ")
 
 	user = session.query(User).filter(User.username == username, User.password == password).first()
 	if user == None:
@@ -75,7 +78,6 @@ def login():
 
 	logged_in = user
 
-	global logged_in
 	return user
 
 def add_item():
@@ -119,17 +121,6 @@ def highest_bidder():
 	""" Provides information about the highest bidder or bidders if the bid amount is the same """
 	item = int(input("Check bids relating to item number: "))
 	# highest_bid = session.query(func.max(Bid.price)).filter(Bid.item_id == item).all()
-	highest_bid = session.query(func.max(Bid.price)).filter(Bid.item_id == item).scalar()
+	highest_bid = session.query(desc(Bid.price)).filter(Bid.item_id == item).first()
 	# highest_bid = session.query(func.max(Bid.price)).filter(Bid.item_id == item).order_by("id")
-	print (highest_bid)
-	
-
-	# x = len(highest_bid)
-
-	# if len(highest_bid) > 1:
-	# 	print("The following {!r} users have placed the highest bid:".format(x))
-	# 	for bid in highest_bid:
-	# 		print("Name: {!r}, Bid ID: {!r}, Bid amount: {!r}. \n".format(bid.bid_owner.name, bid.id, bid.price))
-
-	# 	else:
-	# 		print("Name: {!r}, Bid ID: {!r}, Bid amount: {!r}".format(bid.bid_owner.name, bid.id, bid.price))
+	print ("{!r} has the highest bid of USD {!r}".format(highest_bid, highest_bid))
