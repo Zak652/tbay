@@ -14,29 +14,37 @@ def main():
 		#User login
 		while user is None:
 			user = login()
-		#select activity after logging in
-		activity = input("Enter 'A' To add new item, 'B' To place a bid, 'H' To view highest bid: ")
-		#Load new items for auctioning
-		if activity in ['A', 'a', 'add']:
-			items_to_add = int(input("How many items would you like to add? "))
 
-			for item in range(items_to_add):
-				add_item()
-			print("Total number of items added: {!r}".format(items_to_add))
+			while True:
+				#select activity after logging in
+				activity = input("Enter 'A' To add new item, 'B' To place a bid, 'H' To view highest bid,"
+								" 'X' To logout: ")
+				#Load new items for auctioning
+				if activity in ['A', 'a', 'add']:
+					items_to_add = int(input("How many items would you like to add? "))
 
-		#Place bid on auctioned items
-		elif activity in ['B', 'b', 'bid']:
-			items_to_bid = int(input("How many bids will you place? "))
+					for item in range(items_to_add):
+						add_item()
+					print("Total number of items added: {} \n".format(items_to_add))
+					print("Please select a new activity")
 
-			for bid in range(items_to_bid):
-				place_bid()
-			print("Total number of bids placed: {!r}".format(items_to_bid))
+				#Place bid on auctioned items
+				elif activity in ['B', 'b', 'bid']:
+					items_to_bid = int(input("How many bids will you place? "))
 
-		#View highest bid
-		elif activity in ['H', 'h', 'view']:
-			print(biddable_items())
-			print(highest_bidder())
+					for bid in range(items_to_bid):
+						place_bid()
+					print("Total number of bids processed: {}".format(items_to_bid))
 
+				#View highest bid
+				elif activity in ['H', 'h', 'view']:
+					print(biddable_items(),'\n')
+					print(highest_bidder(),'\n')
+					print("Please select a new activity")
+
+				#Logout
+				elif activity in ['X', 'x', 'logout']:
+					break
 
 	#Register a new user
 	elif option in ['R', 'r']:

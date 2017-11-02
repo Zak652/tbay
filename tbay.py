@@ -52,7 +52,7 @@ def register_user():
 	newuser = None
 	print("Please provide details for a new user")
 	username = input("Username: ")
-	password = input("Password: ")
+	password = getpass.getpass("Password: ")
 
 	#Check if username already exists
 	if username and password is not None:
@@ -69,12 +69,11 @@ def login():
 	""" Login facility for registered users """
 	global logged_in
 	username = input("Username: ")
-	# password = input("Password: ")
 	password = getpass.getpass("Password: ")
 
 	user = session.query(User).filter(User.username == username, User.password == password).first()
-	if user == None:
-		print("User is not registered, please register.")
+	# if user == None:
+	# 	print("User is not registered, please register.")
 
 	logged_in = user
 
@@ -110,17 +109,29 @@ def place_bid():
 	print(biddable_items())
 	new_bid = None
 
+	#Select item to bid for
 	item_no = int(input("Item number: "))
-	bid_amount = int(input("Bid amount: "))
-	new_bid = Bid(item_id = item_no, price = bid_amount, bid_owner = logged_in.id)
-	session.add(new_bid)
-	session.commit()
-	print("You've placed of ${!r} on item number: {!r}.".format(bid_amount, item_no))
+
+	#Display highest bid on selected item
+	highest = session.query(Bid).filter(Bid.item_id == item_no).order_by(desc(Bid.price)).first()
+	print("Currently the highest bid for item {} is USD{}".format(item_no, highest.price))
+
+	#Place bidding amount
+	bid_amount = int(input("Your bidding amount is USD: "))
+
+	if bid_amount > highest.price:
+		new_bid = Bid(item_id = item_no, price = bid_amount, bid_owner = logged_in.id)
+		session.add(new_bid)
+		session.commit()
+		print("You've placed of ${} on item number: {}.".format(bid_amount, item_no))
+
+	else:
+		print("Bid not accepted. Please place an amount higher than USD{}".format(highest.price))
 
 def highest_bidder():
 	""" Provides information about the highest bidder or bidders if the bid amount is the same """
 	item = int(input("Check bids relating to item number: "))
 	# highest_bid = session.query(func.max(Bid.price)).filter(Bid.item_id == item).all()
-	highest_bid = session.query(desc(Bid.price)).filter(Bid.item_id == item).first()
+	highest_bid = session.query(Bid).filter(Bid.item_id == item).order_by(desc(Bid.price)).first()
 	# highest_bid = session.query(func.max(Bid.price)).filter(Bid.item_id == item).order_by("id")
-	print ("{!r} has the highest bid of USD {!r}".format(highest_bid, highest_bid))
+	print ("{} has the highest bid of USD {}".format(highest_bid.bidder.username, highest_bid.price))
